@@ -57,7 +57,7 @@ class CapabilityId(IntEnum):
     CVP = 0x0098  # ??
     NEW_WIND_SENSE = 0x00AA  # AKA "Argentina 35CB1 Breeze Away"
     PWHP_COMFORT = 0x00AD  # AKA "Packaged Window Heat Pump Comfort" ??
-    TURBO_PLUS = 0x00B3  # AKAK "Quick Cool Heat"
+    TURBO_PLUS = 0x00B3  # AKA "Quick Cool Heat"
     SLEEP_CURVE_3D_OSD = 0x00C0  # AKA "Power Saving Screen"
     MEETING_MODE = 0x00C1  # ??
     BREEZE_AWAY_SPEED = 0x00CB  # AKA "Prevent Straight Wind Speed"
@@ -65,7 +65,7 @@ class CapabilityId(IntEnum):
     OUT_SILENT = 0x00CD
     # TODO indicates if fan speed is adjustable in fan mode
     FAN_MODE_SPEED_CONTROL = 0x00CE
-    SMART_COOL_2 = 0x00D2  # AKK "Prevent Super Cool 2"
+    SMART_COOL_2 = 0x00D2  # AKA "Prevent Super Cool 2"
     IMAX_WIND = 0x00D3  # AKA "All Air"
     PRESET_IECO = 0x00E3
     EZ_INSTA_COOL = 0x00F6  # AKA "India EZ Project Insta Cool"
@@ -1245,7 +1245,7 @@ class Group4Response(Response):
         total_energy_bcd, total_energy_binary = parse_energy(
             payload[4:8])
 
-        # JS references decodes bytes 8 - 11 as "total running energy"
+        # JS reference decodes bytes 8 - 11 as "total running energy"
         # Older JS does not decode these bytes, and sample payloads contain bogus data
 
         # Current run energy consumption bytes 12 - 15
@@ -1256,7 +1256,7 @@ class Group4Response(Response):
         real_time_power_bcd, real_time_power_binary = parse_power(
             payload[16:19])
 
-        # Assume energy monitory is valid if at least one stat is non zero
+        # Assume energy monitoring is valid if at least one stat is non zero
         valid = total_energy_bcd or current_energy_bcd or real_time_power_bcd
 
         self.total_energy = total_energy_bcd if valid else None
