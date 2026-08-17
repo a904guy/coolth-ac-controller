@@ -2,10 +2,11 @@ import logging
 import unittest
 from typing import cast
 
-from msmart.const import DeviceType, FrameType
-from msmart.frame import Frame, InvalidFrameException
+from coolth.const import DeviceType, FrameType
+from coolth.frame import Frame, InvalidFrameException
 
-from .command import *
+from coolth.device.CC.command import *
+
 
 
 class _TestResponseBase(unittest.TestCase):
@@ -402,7 +403,7 @@ class TestControlResponse(_TestResponseBase):
         TEST_PAYLOAD = bytes.fromhex(
             "00000101ffaa030180ff0000")
 
-        with self.assertLogs("msmart", logging.WARNING) as log:
+        with self.assertLogs("coolth", logging.WARNING) as log:
             resp = self._test_payload(TEST_PAYLOAD)
 
             # Check warning is generated for ID 0x001E

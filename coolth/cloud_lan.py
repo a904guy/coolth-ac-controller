@@ -1,7 +1,7 @@
 """Cloud transport for Midea AC devices.
 
 Relays device command frames through the Midea cloud's
-``/v1/appliance/transparent/send/new`` endpoint, so an ordinary msmart device
+``/v1/appliance/transparent/send/new`` endpoint, so an ordinary coolth device
 (e.g. ``AirConditioner``) can be controlled from anywhere with only account
 credentials, without local network access to the unit. Useful when the device
 is on an isolated network.

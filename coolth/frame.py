@@ -1,6 +1,6 @@
 from typing import Union
 
-from msmart.const import DeviceType, FrameType
+from coolth.const import DeviceType, FrameType
 
 
 class InvalidFrameException(Exception):

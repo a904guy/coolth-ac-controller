@@ -7,9 +7,9 @@ from collections import namedtuple
 from enum import IntEnum
 from typing import Any, Callable, Collection, Mapping, Optional, Union
 
-import msmart.crc8 as crc8
-from msmart.const import DeviceType, FrameType
-from msmart.frame import Frame
+import coolth.crc8 as crc8
+from coolth.const import DeviceType, FrameType
+from coolth.frame import Frame
 
 _LOGGER = logging.getLogger(__name__)
 

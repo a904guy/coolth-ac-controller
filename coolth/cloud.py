@@ -14,7 +14,7 @@ import httpx
 from Crypto.Cipher import AES
 from Crypto.Util import Padding
 
-from msmart.const import DEFAULT_CLOUD_REGION, DeviceType
+from coolth.const import DEFAULT_CLOUD_REGION, DeviceType
 
 _LOGGER = logging.getLogger(__name__)
 

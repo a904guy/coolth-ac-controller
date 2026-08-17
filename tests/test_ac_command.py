@@ -2,10 +2,11 @@ import logging
 import unittest
 from typing import cast
 
-from msmart.const import DeviceType, FrameType
-from msmart.frame import Frame, InvalidFrameException
+from coolth.const import DeviceType, FrameType
+from coolth.frame import Frame, InvalidFrameException
 
-from .command import *
+from coolth.device.AC.command import *
+
 
 
 class _TestResponseBase(unittest.TestCase):
@@ -389,7 +390,7 @@ class TestCapabilitiesResponse(_TestResponseBase):
             "aa3dac00000000000203b50a12020101180001001402010115020101160201001a020101100201011f020100250207203c203c203c00400001000100c83a")
 
         # Test case includes an unknown capability 0x40 that generates a warning
-        with self.assertLogs("msmart", logging.DEBUG) as log:
+        with self.assertLogs("coolth", logging.DEBUG) as log:
             resp = self._test_build_response(TEST_CAPABILITIES_RESPONSE)
             resp = cast(CapabilitiesResponse, resp)
 
@@ -556,7 +557,7 @@ class TestCapabilitiesResponse(_TestResponseBase):
             "aa3dac00000000000303b50a12020101430001011402010115020101160201001a020101100201011f020103250207203c203c203c05400001000100c805")
 
         # Test case includes an unknown capability 0x40 that generates a log
-        with self.assertLogs("msmart", logging.DEBUG) as log:
+        with self.assertLogs("coolth", logging.DEBUG) as log:
             resp = self._test_build_response(TEST_CAPABILITIES_RESPONSE)
             resp = cast(CapabilitiesResponse, resp)
 
@@ -667,7 +668,7 @@ class TestCapabilitiesResponse(_TestResponseBase):
             "aa29ac00000000000303b50514020109150201021a020101250207203c203c203c003402010101007b1d")
 
         # Test case includes an unknown capability 0x40 that generates a log
-        with self.assertLogs("msmart", logging.DEBUG) as log:
+        with self.assertLogs("coolth", logging.DEBUG) as log:
             resp = self._test_build_response(TEST_CAPABILITIES_RESPONSE)
             resp = cast(CapabilitiesResponse, resp)
 
@@ -710,7 +711,7 @@ class TestCapabilitiesResponse(_TestResponseBase):
         ]
 
         # Test cases include some unsupported capabilities
-        with self.assertLogs("msmart", logging.DEBUG) as log:
+        with self.assertLogs("coolth", logging.DEBUG) as log:
             for response in TEST_RESPONSES:
                 resp = self._test_build_response(response)
                 resp = cast(CapabilitiesResponse, resp)
@@ -924,7 +925,7 @@ class TestPropertiesResponse(_TestResponseBase):
             "aa21ac00000000000303b10409000001000a00000100150000012b1e020000005fa3")
 
         # Response contains an unsupported property so check the log for warnings
-        with self.assertLogs("msmart", logging.WARNING) as log:
+        with self.assertLogs("coolth", logging.WARNING) as log:
             resp = self._test_build_response(TEST_RESPONSE)
 
             self.assertRegex("\n".join(log.output),
@@ -952,7 +953,7 @@ class TestPropertiesResponse(_TestResponseBase):
             "aa18ac00000000000302b0020a0000013209001101000089a4")
 
         # Device did not support SWING_UD_ANGLE, check that an error was reported
-        with self.assertLogs("msmart", logging.WARNING) as log:
+        with self.assertLogs("coolth", logging.WARNING) as log:
             resp = self._test_build_response(TEST_RESPONSE)
             resp = cast(PropertiesResponse, resp)
 
@@ -990,7 +991,7 @@ class TestPropertiesResponse(_TestResponseBase):
         TEST_RESPONSE = bytes.fromhex(
             "aa1bac00000000000202b0021e001004001000001a00000100000e18")
 
-        with self.assertLogs("msmart", logging.WARNING) as log:
+        with self.assertLogs("coolth", logging.WARNING) as log:
             resp = self._test_build_response(TEST_RESPONSE)
             resp = cast(PropertiesResponse, resp)
 
@@ -1009,7 +1010,7 @@ class TestPropertiesResponse(_TestResponseBase):
         TEST_RESPONSE = bytes.fromhex(
             "aa18ac00000000000302b00243001101041a00000100002ce5")
 
-        with self.assertLogs("msmart", logging.WARNING) as log:
+        with self.assertLogs("coolth", logging.WARNING) as log:
             resp = self._test_build_response(TEST_RESPONSE)
             resp = cast(PropertiesResponse, resp)
 

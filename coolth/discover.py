@@ -8,10 +8,10 @@ from typing import Any, Callable, Optional, cast
 
 import httpx
 
-from msmart.base_device import Device
-from msmart.cloud import CloudError, NetHomePlusCloud
-from msmart.const import DEFAULT_CLOUD_REGION, DEVICE_INFO_MSG, DISCOVERY_MSG
-from msmart.lan import AuthenticationError, Security
+from coolth.base_device import Device
+from coolth.cloud import CloudError, NetHomePlusCloud
+from coolth.const import DEFAULT_CLOUD_REGION, DEVICE_INFO_MSG, DISCOVERY_MSG
+from coolth.lan import AuthenticationError, Security
 
 _LOGGER = logging.getLogger(__name__)
 

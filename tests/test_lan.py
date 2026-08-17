@@ -5,8 +5,9 @@ from contextlib import contextmanager
 from typing import Generator, cast
 from unittest.mock import AsyncMock, MagicMock, PropertyMock, patch
 
-from msmart.lan import (LAN, AuthenticationError, ProtocolError, _LanProtocol,
+from coolth.lan import (LAN, AuthenticationError, ProtocolError, _LanProtocol,
                         _LanProtocolV3, _Packet)
+
 
 
 class TestEncodeDecode(unittest.IsolatedAsyncioTestCase):
@@ -186,7 +187,7 @@ class TestLan(unittest.IsolatedAsyncioTestCase):
 
             # Test ProtocolErrors bubble up and disconnect
             with (
-                self.assertLogs("msmart.lan", logging.WARNING),
+                self.assertLogs("coolth.lan", logging.WARNING),
                 self.assertRaises(ProtocolError)
             ):
                 await lan.send(bytes(0))
@@ -201,7 +202,7 @@ class TestLan(unittest.IsolatedAsyncioTestCase):
 
             # Test cancelled exceptions log a warning, bubble up as TimeoutError and disconnect
             with (
-                self.assertLogs("msmart", logging.WARNING) as log,
+                self.assertLogs("coolth", logging.WARNING) as log,
                 self.assertRaisesRegex(TimeoutError, "Read cancelled.")
             ):
                 await lan.send(bytes(0))
@@ -235,7 +236,7 @@ class TestLan(unittest.IsolatedAsyncioTestCase):
             lan._protocol.authenticate = AsyncMock(side_effect=TimeoutError)
             with (
                 self.assertRaisesRegex(TimeoutError, "No response from host."),
-                self.assertLogs("msmart.lan", logging.DEBUG) as log
+                self.assertLogs("coolth.lan", logging.DEBUG) as log
             ):
 
                 await lan.authenticate(key=bytes(10), token=bytes(10))
@@ -252,7 +253,7 @@ class TestLan(unittest.IsolatedAsyncioTestCase):
             lan._disconnect.reset_mock()
             with (
                 self.assertRaisesRegex(TimeoutError, "No response from host."),
-                self.assertLogs("msmart.lan", logging.DEBUG) as log
+                self.assertLogs("coolth.lan", logging.DEBUG) as log
             ):
                 await lan.authenticate(key=bytes(10), token=bytes(10))
 
@@ -321,7 +322,7 @@ class TestProtocol(unittest.IsolatedAsyncioTestCase):
     async def test_read_connection_lost_exception(self) -> None:
         """Test that connection lose will raise an exception."""
         with self._mock_protocol() as protocol:
-            with self.assertLogs("msmart.lan", logging.ERROR):
+            with self.assertLogs("coolth.lan", logging.ERROR):
                 protocol.connection_lost(ConnectionResetError())
 
             with self.assertRaises(ProtocolError):

@@ -5,16 +5,16 @@ import time
 from enum import Enum, Flag
 from typing import TYPE_CHECKING, Any, NoReturn, Optional, Union, cast
 
-from msmart.const import DeviceType
-from msmart.frame import Frame
-from msmart.lan import LAN, AuthenticationError, Key, ProtocolError, Token
-from msmart.utils import CapabilityManager
+from coolth.const import DeviceType
+from coolth.frame import Frame
+from coolth.lan import LAN, AuthenticationError, Key, ProtocolError, Token
+from coolth.utils import CapabilityManager
 
 _LOGGER = logging.getLogger(__name__)
 
 if TYPE_CHECKING:
     # Conditionally import device classes for type hints
-    from msmart.device import AirConditioner, CommercialAirConditioner
+    from coolth.device import AirConditioner, CommercialAirConditioner
 
 
 class Device():
@@ -243,11 +243,11 @@ class Device():
         kwargs.pop("device_type", None)
 
         if type == DeviceType.AIR_CONDITIONER:
-            from msmart.device import AirConditioner
+            from coolth.device import AirConditioner
             return AirConditioner(**kwargs)
 
         if type == DeviceType.COMMERCIAL_AC:
-            from msmart.device import CommercialAirConditioner
+            from coolth.device import CommercialAirConditioner
             return CommercialAirConditioner(**kwargs)
 
         # Unknown type return generic device

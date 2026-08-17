@@ -3,11 +3,11 @@ requires = ["setuptools>=61.0.0", "setuptools_scm[toml]>=6.2"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "msmart-ng"
-description = "A Python library for local control of Midea (and associated brands) smart air conditioners."
+name = "coolth"
+description = "Control Midea (and associated brands) smart air conditioners over the local network or the Midea cloud. This controls: Artic King, Cooper & Hunter, Midea Air, NetHome Plus, SmartHome/MSmartHome, Toshiba AC NA, and 美的美居."
 readme = "README.md"
 authors = [
-  {name = "Tucker Kern", email = "tuckkern@gmail.com"},
+  {name = "Andy Hawkins", email = "andy@a904guy.com"},
 ]
 requires-python = ">=3.10"
 license = "MIT"
@@ -31,18 +31,18 @@ dynamic = ["version"]
 yaml = ["pyyaml"]
 
 [project.urls]
-Repository = "https://github.com/mill1000/midea-msmart"
-Issues = "https://github.com/mill1000/midea-msmart/issues"
+Repository = "https://github.com/a904guy/coolth-ac-controller"
+Issues = "https://github.com/a904guy/coolth-ac-controller/issues"
 
 [project.scripts]
-msmart-ng = "msmart.cli:main"
+coolth = "coolth.cli:main"
 
 [tool.setuptools]
 include-package-data = false
 
 [tool.setuptools.packages.find]
 where = ["."]
-include = ["msmart", "msmart.*"]
-exclude = ["msmart.tests"]
+include = ["coolth", "coolth.*"]
+
 
 [tool.setuptools_scm]

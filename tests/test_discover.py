@@ -3,10 +3,10 @@ import unittest
 import unittest.mock as mock
 from unittest.mock import patch
 
-from msmart.base_device import Device
-from msmart.const import DISCOVERY_MSG, DeviceType
-from msmart.device import AirConditioner as AC
-from msmart.discover import _IPV4_BROADCAST, Discover
+from coolth.base_device import Device
+from coolth.const import DISCOVERY_MSG, DeviceType
+from coolth.device import AirConditioner as AC
+from coolth.discover import _IPV4_BROADCAST, Discover
 
 _DISCOVER_RESPONSES = [
     (("10.100.1.140", 6445), bytes.fromhex("5a5a011178007a8000000000000000000000000060ca0000000e0000000000000000000001000000c08651cb1b88a167bdcf7d37534ef81312d39429bf9b2673f200b635fae369a560fa9655eab8344be22b1e3b024ef5dfd392dc3db64dbffb6a66fb9cd5ec87a78000cd9043833b9f76991e8af29f3496")),
@@ -84,7 +84,7 @@ class TestDiscoverProtocol(unittest.IsolatedAsyncioTestCase):
     # pylint: disable=protected-access
 
     async def _discover(self, *args, method=Discover.discover, **kwargs):
-        """Run the msmart-ng discover flow with necessary mocking."""
+        """Run the coolth discover flow with necessary mocking."""
 
         # Mock the underlying transport
         mock_transport = mock.MagicMock()
@@ -217,7 +217,7 @@ class TestDiscoverProtocol(unittest.IsolatedAsyncioTestCase):
             return True
 
         # Patch the Discover.connect method to fake a device connection
-        with patch("msmart.discover.Discover.connect", side_effect=mock_connect_side_effect) as mock_connect:
+        with patch("coolth.discover.Discover.connect", side_effect=mock_connect_side_effect) as mock_connect:
             # Wait for discovery to complete
             devices = await discover_task
 

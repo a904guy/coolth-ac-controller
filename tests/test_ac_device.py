@@ -2,13 +2,14 @@ import logging
 import unittest
 from unittest.mock import patch
 
-from .command import (CapabilitiesResponse, GetGroupDataCommand,
+from coolth.device.AC.command import (CapabilitiesResponse, GetGroupDataCommand,
                       GetPropertiesCommand, GetStateCommand, Group1Response,
                       Group2Response, Group4Response, Group5Response,
                       Group7Response, Group11Response, PropertiesResponse,
                       Response, StateResponse)
-from .device import AirConditioner as AC
-from .device import PropertyId
+from coolth.device.AC.device import AirConditioner as AC
+from coolth.device.AC.device import PropertyId
+
 
 
 class TestDeviceEnums(unittest.TestCase):
@@ -118,7 +119,7 @@ class TestUpdateStateFromResponse(unittest.TestCase):
         device.vertical_swing_angle = AC.SwingAngle.POS_5
 
         # Response contains an unsupported property so check the log for warnings
-        with self.assertLogs("msmart", logging.WARNING) as log:
+        with self.assertLogs("coolth", logging.WARNING) as log:
             resp = Response.construct(TEST_RESPONSE)
 
             self.assertRegex("\n".join(log.output),
@@ -149,7 +150,7 @@ class TestUpdateStateFromResponse(unittest.TestCase):
         device.vertical_swing_angle = AC.SwingAngle.OFF
 
         # Device did not support SWING_UD_ANGLE, check that an error was reported
-        with self.assertLogs("msmart", logging.WARNING) as log:
+        with self.assertLogs("coolth", logging.WARNING) as log:
             resp = Response.construct(TEST_RESPONSE)
             self.assertIsNotNone(resp)
 
@@ -764,7 +765,7 @@ class TestRefresh(unittest.IsolatedAsyncioTestCase):
         device = AC(0, 0, 0)
 
         # Patch _send_commands_get_responses so we can inspect the commands sent
-        with patch("msmart.device.AC.device.AirConditioner._send_commands_get_responses", return_value=[]) as patched_method:
+        with patch("coolth.device.AC.device.AirConditioner._send_commands_get_responses", return_value=[]) as patched_method:
             await device.refresh()
 
             # Assert patched method was awaited
@@ -785,7 +786,7 @@ class TestRefresh(unittest.IsolatedAsyncioTestCase):
         device.enable_energy_usage_requests = True
 
         # Patch _send_commands_get_responses so we can inspect the commands sent
-        with patch("msmart.device.AC.device.AirConditioner._send_commands_get_responses", return_value=[]) as patched_method:
+        with patch("coolth.device.AC.device.AirConditioner._send_commands_get_responses", return_value=[]) as patched_method:
             await device.refresh()
 
             # Assert patched method was awaited
@@ -806,7 +807,7 @@ class TestRefresh(unittest.IsolatedAsyncioTestCase):
         device._capabilities.set(AC.Capability.HUMIDITY)
 
         # Patch _send_commands_get_responses so we can inspect the commands sent
-        with patch("msmart.device.AC.device.AirConditioner._send_commands_get_responses", return_value=[]) as patched_method:
+        with patch("coolth.device.AC.device.AirConditioner._send_commands_get_responses", return_value=[]) as patched_method:
             await device.refresh()
 
             # Assert patched method was awaited
@@ -827,7 +828,7 @@ class TestRefresh(unittest.IsolatedAsyncioTestCase):
         device.enable_group5_data_requests = True
 
         # Patch _send_commands_get_responses so we can inspect the commands sent
-        with patch("msmart.device.AC.device.AirConditioner._send_commands_get_responses", return_value=[]) as patched_method:
+        with patch("coolth.device.AC.device.AirConditioner._send_commands_get_responses", return_value=[]) as patched_method:
             await device.refresh()
 
             # Assert patched method was awaited
@@ -846,7 +847,7 @@ class TestRefresh(unittest.IsolatedAsyncioTestCase):
         device = AC(0, 0, 0)
         device.enable_group1_data_requests = True
 
-        with patch("msmart.device.AC.device.AirConditioner._send_commands_get_responses", return_value=[]) as patched_method:
+        with patch("coolth.device.AC.device.AirConditioner._send_commands_get_responses", return_value=[]) as patched_method:
             await device.refresh()
             patched_method.assert_awaited_once()
 
@@ -862,7 +863,7 @@ class TestRefresh(unittest.IsolatedAsyncioTestCase):
         device = AC(0, 0, 0)
         device.enable_group2_data_requests = True
 
-        with patch("msmart.device.AC.device.AirConditioner._send_commands_get_responses", return_value=[]) as patched_method:
+        with patch("coolth.device.AC.device.AirConditioner._send_commands_get_responses", return_value=[]) as patched_method:
             await device.refresh()
             patched_method.assert_awaited_once()
 
@@ -878,7 +879,7 @@ class TestRefresh(unittest.IsolatedAsyncioTestCase):
         device = AC(0, 0, 0)
         device.enable_group7_data_requests = True
 
-        with patch("msmart.device.AC.device.AirConditioner._send_commands_get_responses", return_value=[]) as patched_method:
+        with patch("coolth.device.AC.device.AirConditioner._send_commands_get_responses", return_value=[]) as patched_method:
             await device.refresh()
             patched_method.assert_awaited_once()
 
@@ -893,7 +894,7 @@ class TestRefresh(unittest.IsolatedAsyncioTestCase):
 
         device = AC(0, 0, 0)
 
-        with patch("msmart.device.AC.device.AirConditioner._send_commands_get_responses", return_value=[]) as patched_method:
+        with patch("coolth.device.AC.device.AirConditioner._send_commands_get_responses", return_value=[]) as patched_method:
             await device.refresh()
             patched_method.assert_awaited_once()
 
@@ -913,7 +914,7 @@ class TestRefresh(unittest.IsolatedAsyncioTestCase):
         device._supported_properties.add(PropertyId.BREEZE_CONTROL)
 
         # Patch _send_commands_get_responses so we can inspect the commands sent
-        with patch("msmart.device.AC.device.AirConditioner._send_commands_get_responses", return_value=[]) as patched_method:
+        with patch("coolth.device.AC.device.AirConditioner._send_commands_get_responses", return_value=[]) as patched_method:
             await device.refresh()
 
             # Assert patched method was awaited
@@ -941,7 +942,7 @@ class TestSendCommandGetResponse(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(device.online, True)
 
         # Patch _send_command to return no responses
-        with patch("msmart.base_device.Device._send_command", return_value=[]) as patched_method:
+        with patch("coolth.base_device.Device._send_command", return_value=[]) as patched_method:
 
             # Refresh device
             await device.refresh()
@@ -965,7 +966,7 @@ class TestSendCommandGetResponse(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(device.supported, False)
 
         # Patch _send_command to return a valid state response
-        with patch("msmart.base_device.Device._send_command", return_value=[TEST_RESPONSE]) as patched_method:
+        with patch("coolth.base_device.Device._send_command", return_value=[TEST_RESPONSE]) as patched_method:
 
             # Refresh device
             await device.refresh()
@@ -1002,7 +1003,7 @@ class TestSendCommandGetResponse(unittest.IsolatedAsyncioTestCase):
                 return []
 
         # Patch _send_command to return test responses
-        with patch("msmart.base_device.Device._send_command", new=_get_responses_sometimes):
+        with patch("coolth.base_device.Device._send_command", new=_get_responses_sometimes):
 
             # Force additional features so refresh() sends multiple requests are sent
             device.enable_energy_usage_requests = True
@@ -1031,7 +1032,7 @@ class TestSendCommandGetResponse(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(device.supported, False)
 
         # Patch _send_command to return response
-        with patch("msmart.base_device.Device._send_command", return_value=[TEST_RESPONSE]) as patched_method:
+        with patch("coolth.base_device.Device._send_command", return_value=[TEST_RESPONSE]) as patched_method:
 
             # Refresh device
             await device.refresh()
@@ -1044,7 +1045,7 @@ class TestSendCommandGetResponse(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(device.supported, True)
 
         # Patch _send_command to return no response
-        with patch("msmart.base_device.Device._send_command", return_value=[]) as patched_method:
+        with patch("coolth.base_device.Device._send_command", return_value=[]) as patched_method:
 
             # Refresh device again
             await device.refresh()
@@ -1070,9 +1071,9 @@ class TestSendCommandGetResponse(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(device.supported, False)
 
         # Patch _send_command to return response
-        with patch("msmart.base_device.Device._send_command", return_value=[TEST_RESPONSE]) as patched_method:
+        with patch("coolth.base_device.Device._send_command", return_value=[TEST_RESPONSE]) as patched_method:
 
-            with self.assertLogs("msmart", logging.ERROR) as log:
+            with self.assertLogs("coolth", logging.ERROR) as log:
                 # Refresh device
                 await device.refresh()
 
@@ -1098,9 +1099,9 @@ class TestSendCommandGetResponse(unittest.IsolatedAsyncioTestCase):
         device = AC(0, 0, 0)
 
         # Patch _send_command to return test response
-        with patch("msmart.base_device.Device._send_command", return_value=[TEST_RESPONSE]) as patched_method:
+        with patch("coolth.base_device.Device._send_command", return_value=[TEST_RESPONSE]) as patched_method:
             # Get device capabilities
-            with self.assertLogs("msmart", logging.DEBUG) as log:
+            with self.assertLogs("coolth", logging.DEBUG) as log:
                 await device.get_capabilities()
 
                 self.assertRegex("\n".join(log.output),
@@ -1122,7 +1123,7 @@ class TestDeprecation(unittest.TestCase):
         # Create dummy device
         device = AC(0, 0, 0)
 
-        with self.assertLogs("msmart", logging.DEBUG) as log:
+        with self.assertLogs("coolth", logging.DEBUG) as log:
             total_energy = device.total_energy_usage
             current_energy = device.current_energy_usage
             power = device.real_time_power_usage
@@ -1140,7 +1141,7 @@ class TestDeprecation(unittest.TestCase):
         # Create dummy device
         device = AC(0, 0, 0)
 
-        with self.assertLogs("msmart", logging.DEBUG) as log:
+        with self.assertLogs("coolth", logging.DEBUG) as log:
             device.use_alternate_energy_format = True
 
             self.assertRegex("\n".join(log.output),
@@ -1152,21 +1153,21 @@ class TestDeprecation(unittest.TestCase):
         # Create dummy device
         device = AC(0, 0, 0)
 
-        with self.assertLogs("msmart", logging.DEBUG) as log:
+        with self.assertLogs("coolth", logging.DEBUG) as log:
             supports_flash_cool = device.supports_flash_cool
 
             self.assertRegex("\n".join(log.output),
                              "'supports_flash_cool' is deprecated")
 
         # Getter
-        with self.assertLogs("msmart", logging.DEBUG) as log:
+        with self.assertLogs("coolth", logging.DEBUG) as log:
             flash_cool = device.flash_cool
 
             self.assertRegex("\n".join(log.output),
                              "'flash_cool' is deprecated")
 
         # Setter
-        with self.assertLogs("msmart", logging.DEBUG) as log:
+        with self.assertLogs("coolth", logging.DEBUG) as log:
             device.flash_cool = False
 
             self.assertRegex("\n".join(log.output),

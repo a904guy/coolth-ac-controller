@@ -1,4 +1,4 @@
-"""Lightweight config-file support for the msmart-ng CLI.
+"""Lightweight config-file support for the coolth CLI.
 
 Lets you keep credentials and common defaults out of the command line. Config
 keys match the CLI flag names, so a file entry mirrors the flag it replaces.
@@ -8,9 +8,9 @@ Resolution order (first wins):
     2. a config file (KEY=VALUE lines)
 
 Config file search order (first found is loaded):
-    * path in $MSMART_CONFIG
-    * ./.msmart-ng.env
-    * $XDG_CONFIG_HOME/msmart-ng/config   (or ~/.config/msmart-ng/config)
+    * path in $COOLTH_CONFIG
+    * ./.coolth.env
+    * $XDG_CONFIG_HOME/coolth/config   (or ~/.config/coolth/config)
 
 Recognized keys (same names as the CLI flags):
 
@@ -22,7 +22,7 @@ Recognized keys (same names as the CLI flags):
     app_id      override cloud app id   (advanced)
     app_key     override cloud app key  (advanced)
 
-Example .msmart-ng.env:
+Example .coolth.env:
 
     account = you@example.com
     password = hunter2
@@ -43,12 +43,12 @@ _values: dict[str, str] = {}
 
 def _candidate_paths() -> list[Path]:
     paths = []
-    if os.environ.get("MSMART_CONFIG"):
-        paths.append(Path(os.environ["MSMART_CONFIG"]).expanduser())
-    paths.append(Path(".msmart-ng.env"))
+    if os.environ.get("COOLTH_CONFIG"):
+        paths.append(Path(os.environ["COOLTH_CONFIG"]).expanduser())
+    paths.append(Path(".coolth.env"))
     xdg = os.environ.get("XDG_CONFIG_HOME")
     base = Path(xdg).expanduser() if xdg else Path.home() / ".config"
-    paths.append(base / "msmart-ng" / "config")
+    paths.append(base / "coolth" / "config")
     return paths
 
 
