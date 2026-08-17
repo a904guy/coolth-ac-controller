@@ -3,8 +3,8 @@ import unittest
 from typing import cast
 from unittest.mock import MagicMock, patch
 
-from .command import *
-from .device import CommercialAirConditioner as CC
+from coolth.device.CC.command import *
+from coolth.device.CC.device import CommercialAirConditioner as CC
 
 
 class TestDeviceEnums(unittest.TestCase):
@@ -386,7 +386,7 @@ class TestSetState(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(len(device._updated_controls), 5)
 
         # Patch to prevent network access
-        with patch("msmart.device.CC.device.CommercialAirConditioner._send_commands_get_responses", return_value=[]) as patched_method:
+        with patch("coolth.device.CC.device.CommercialAirConditioner._send_commands_get_responses", return_value=[]) as patched_method:
 
             # Apply changed settings
             await device.apply()
@@ -423,10 +423,10 @@ class TestSetState(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(len(device._updated_controls), 3)
 
         # Patch to prevent network access
-        with patch("msmart.device.CC.device.CommercialAirConditioner._send_commands_get_responses", return_value=[]) as patched_method:
+        with patch("coolth.device.CC.device.CommercialAirConditioner._send_commands_get_responses", return_value=[]) as patched_method:
 
             # Apply changed settings
-            with self.assertLogs("msmart", logging.WARNING) as log:
+            with self.assertLogs("coolth", logging.WARNING) as log:
                 await device.apply()
 
                 # Check log for warning about dropped controls
@@ -470,7 +470,7 @@ class TestSetState(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(len(device._updated_controls), 1)
 
         # Patch to prevent network access
-        with patch("msmart.device.CC.device.CommercialAirConditioner._send_commands_get_responses", return_value=[]) as patched_method:
+        with patch("coolth.device.CC.device.CommercialAirConditioner._send_commands_get_responses", return_value=[]) as patched_method:
 
             # Apply changed settings
             await device.apply()
@@ -503,7 +503,7 @@ class TestSendCommandGetResponse(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(device.online, True)
 
         # Patch _send_command to return no responses
-        with patch("msmart.base_device.Device._send_command", return_value=[]) as patched_method:
+        with patch("coolth.base_device.Device._send_command", return_value=[]) as patched_method:
 
             # Refresh device
             await device.refresh()
@@ -527,7 +527,7 @@ class TestSendCommandGetResponse(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(device.supported, False)
 
         # Patch _send_command to return a valid state response
-        with patch("msmart.base_device.Device._send_command", return_value=[TEST_RESPONSE]) as patched_method:
+        with patch("coolth.base_device.Device._send_command", return_value=[TEST_RESPONSE]) as patched_method:
 
             # Refresh device
             await device.refresh()
@@ -564,7 +564,7 @@ class TestSendCommandGetResponse(unittest.IsolatedAsyncioTestCase):
                 return []
 
         # Patch _send_command to return test responses
-        with patch("msmart.base_device.Device._send_command", new=_get_responses_sometimes):
+        with patch("coolth.base_device.Device._send_command", new=_get_responses_sometimes):
 
             # Refresh device
             await device.refresh()
@@ -589,7 +589,7 @@ class TestSendCommandGetResponse(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(device.supported, False)
 
         # Patch _send_command to return response
-        with patch("msmart.base_device.Device._send_command", return_value=[TEST_RESPONSE]) as patched_method:
+        with patch("coolth.base_device.Device._send_command", return_value=[TEST_RESPONSE]) as patched_method:
 
             # Refresh device
             await device.refresh()
@@ -602,7 +602,7 @@ class TestSendCommandGetResponse(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(device.supported, True)
 
         # Patch _send_command to return no response
-        with patch("msmart.base_device.Device._send_command", return_value=[]) as patched_method:
+        with patch("coolth.base_device.Device._send_command", return_value=[]) as patched_method:
 
             # Refresh device again
             await device.refresh()
@@ -627,9 +627,9 @@ class TestSendCommandGetResponse(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(device.supported, False)
 
         # Patch _send_command to return response
-        with patch("msmart.base_device.Device._send_command", return_value=[TEST_RESPONSE]) as patched_method:
+        with patch("coolth.base_device.Device._send_command", return_value=[TEST_RESPONSE]) as patched_method:
 
-            with self.assertLogs("msmart", logging.ERROR) as log:
+            with self.assertLogs("coolth", logging.ERROR) as log:
                 # Refresh device
                 await device.refresh()
 
@@ -651,9 +651,9 @@ class TestSendCommandGetResponse(unittest.IsolatedAsyncioTestCase):
         device = CC(0, 0, 0)
 
         # Patch _send_command to return test response
-        with patch("msmart.base_device.Device._send_command", return_value=[]) as patched_method:
+        with patch("coolth.base_device.Device._send_command", return_value=[]) as patched_method:
             # Get device capabilities
-            with self.assertLogs("msmart", logging.DEBUG) as log:
+            with self.assertLogs("coolth", logging.DEBUG) as log:
                 await device.get_capabilities()
 
                 self.assertRegex("\n".join(log.output),
@@ -671,9 +671,9 @@ class TestSendCommandGetResponse(unittest.IsolatedAsyncioTestCase):
         device = CC(0, 0, 0)
 
         # Patch _send_command to return test response
-        with patch("msmart.base_device.Device._send_command", return_value=[WRONG_RESPONSE]) as patched_method:
+        with patch("coolth.base_device.Device._send_command", return_value=[WRONG_RESPONSE]) as patched_method:
             # Get device capabilities
-            with self.assertLogs("msmart", logging.DEBUG) as log:
+            with self.assertLogs("coolth", logging.DEBUG) as log:
                 await device.get_capabilities()
 
                 self.assertRegex("\n".join(log.output),

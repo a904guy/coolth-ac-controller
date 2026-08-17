@@ -4,10 +4,10 @@ import logging
 from enum import Flag, auto
 from typing import Any, Optional, Union, cast
 
-from msmart.base_device import Device
-from msmart.const import DeviceType
-from msmart.frame import InvalidFrameException
-from msmart.utils import CapabilityManager, MideaIntEnum, deprecated
+from coolth.base_device import Device
+from coolth.const import DeviceType
+from coolth.frame import InvalidFrameException
+from coolth.utils import CapabilityManager, MideaIntEnum, deprecated
 
 from .command import (CapabilitiesResponse, Command, GetCapabilitiesCommand,
                       GetGroupDataCommand, GetPropertiesCommand,

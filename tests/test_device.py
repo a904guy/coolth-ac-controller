@@ -3,13 +3,13 @@ import unittest
 from enum import Enum, Flag, auto
 from unittest.mock import patch
 
-from msmart.base_device import Device
-from msmart.const import DeviceType, FrameType
-from msmart.device import AirConditioner as AC
-from msmart.device import CommercialAirConditioner as CC
-from msmart.frame import Frame
-from msmart.lan import ProtocolError
-from msmart.utils import CapabilityManager
+from coolth.base_device import Device
+from coolth.const import DeviceType, FrameType
+from coolth.device import AirConditioner as AC
+from coolth.device import CommercialAirConditioner as CC
+from coolth.frame import Frame
+from coolth.lan import ProtocolError
+from coolth.utils import CapabilityManager
 
 
 class TestSendCommand(unittest.IsolatedAsyncioTestCase):
@@ -23,8 +23,8 @@ class TestSendCommand(unittest.IsolatedAsyncioTestCase):
                         device_type=DeviceType.AIR_CONDITIONER)
 
         # Patch send to timeout
-        with patch("msmart.lan.LAN.send", side_effect=TimeoutError) as patched_method:
-            with self.assertLogs("msmart", logging.WARNING) as log:
+        with patch("coolth.lan.LAN.send", side_effect=TimeoutError) as patched_method:
+            with self.assertLogs("coolth", logging.WARNING) as log:
                 # Send dummy command
                 cmd = Frame(device_type=DeviceType.AIR_CONDITIONER,
                             frame_type=FrameType.CONTROL)
@@ -47,8 +47,8 @@ class TestSendCommand(unittest.IsolatedAsyncioTestCase):
                         device_type=DeviceType.AIR_CONDITIONER)
 
         # Patch send to throw protocol error
-        with patch("msmart.lan.LAN.send", side_effect=ProtocolError) as patched_method:
-            with self.assertLogs("msmart", logging.ERROR) as log:
+        with patch("coolth.lan.LAN.send", side_effect=ProtocolError) as patched_method:
+            with self.assertLogs("coolth", logging.ERROR) as log:
                 # Send dummy command
                 cmd = Frame(device_type=DeviceType.AIR_CONDITIONER,
                             frame_type=FrameType.CONTROL)

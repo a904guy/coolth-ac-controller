@@ -4,16 +4,15 @@ import asyncio
 import logging
 from typing import NoReturn, Union
 
-from msmart import __version__
-from msmart import config
-from msmart.base_device import Device
-from msmart.cloud import CloudError, NetHomePlusCloud, SmartHomeCloud
-from msmart.const import DEFAULT_CLOUD_REGION, DeviceType
-from msmart.device import AirConditioner as AC
-from msmart.device import CommercialAirConditioner as CC
-from msmart.discover import Discover
-from msmart.lan import AuthenticationError
-from msmart.utils import MideaIntEnum
+from coolth import __version__, config
+from coolth.base_device import Device
+from coolth.cloud import CloudError, NetHomePlusCloud, SmartHomeCloud
+from coolth.const import DEFAULT_CLOUD_REGION, DeviceType
+from coolth.device import AirConditioner as AC
+from coolth.device import CommercialAirConditioner as CC
+from coolth.discover import Discover
+from coolth.lan import AuthenticationError
+from coolth.utils import MideaIntEnum
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -63,7 +62,7 @@ async def _connect(args) -> Union[AC, CC]:
     # Cloud transport: control the appliance through the Midea cloud instead of
     # the local network. `host` is the numeric appliance id in this mode.
     if getattr(args, "cloud", False):
-        from msmart.cloud_lan import CloudLAN, attach
+        from coolth.cloud_lan import CloudLAN, attach
 
         if not (args.account and args.password):
             _LOGGER.error("--cloud requires --account and --password.")
@@ -71,7 +70,8 @@ async def _connect(args) -> Union[AC, CC]:
         try:
             appliance_id = int(args.host)
         except (TypeError, ValueError):
-            _LOGGER.error("With --cloud, host must be the numeric appliance id.")
+            _LOGGER.error(
+                "With --cloud, host must be the numeric appliance id.")
             exit(1)
 
         cloud = CloudLAN(appliance_id, args.account, args.password)
@@ -377,7 +377,7 @@ def _run(args) -> NoReturn:
 
 
 def main() -> NoReturn:
-    """Main entry point for msmart-ng command."""
+    """Main entry point for the coolth command."""
 
     # Load credentials/defaults from a config file (if present) before building
     # the parser so env-derived defaults are available.
@@ -385,10 +385,10 @@ def main() -> NoReturn:
 
     # Define the main parser to select subcommands
     parser = argparse.ArgumentParser(
-        description="Command line utility for msmart-ng."
+        description="Command line utility for coolth."
     )
     parser.add_argument("-v", "--version",
-                        action="version", version=f"msmart-ng version: {__version__}")
+                        action="version", version=f"coolth version: {__version__}")
     subparsers = parser.add_subparsers(title="Command", dest="command",
                                        required=True)
 

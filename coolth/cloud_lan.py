@@ -1,7 +1,7 @@
 """Cloud transport for Midea AC devices.
 
 Relays device command frames through the Midea cloud's
-``/v1/appliance/transparent/send/new`` endpoint, so an ordinary msmart device
+``/v1/appliance/transparent/send/new`` endpoint, so an ordinary coolth device
 (e.g. ``AirConditioner``) can be controlled from anywhere with only account
 credentials, without local network access to the unit. Useful when the device
 is on an isolated network.
@@ -223,7 +223,8 @@ class CloudLAN:
         text = self._to_text(packet)
 
         zero = b"\x00" * 16
-        order = AES.new(self._key, AES.MODE_CBC, iv=zero).encrypt(Padding.pad(text, 16)).hex()
+        order = AES.new(self._key, AES.MODE_CBC, iv=zero).encrypt(
+            Padding.pad(text, 16)).hex()
 
         async with httpx.AsyncClient() as client:
             body = {**self._base_body(), "applianceId": str(self.appliance_id),

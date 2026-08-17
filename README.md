@@ -1,10 +1,12 @@
-# msmart-ng (cloud control)
-A Python library for controlling Midea (and associated brands) smart air conditioners over the local network or the Midea cloud. Designed for ease of integration, with async support and minimal dependencies.
+# coolth
+Control Midea (and associated brands) smart air conditioners from Python or the command line. It reaches a device two ways: directly on your local network, or remotely through the Midea cloud. Use whichever fits, or both. Async support, minimal dependencies.
 
-This is an independent fork of [mill1000/midea-msmart](https://github.com/mill1000/midea-msmart) that adds cloud control. The upstream project intentionally does not include cloud functionality, so this fork is maintained separately and is not affiliated with it. Everything from upstream still works; cloud control is an added option.
+Because it can control a unit remotely, you can put the air conditioner on its own isolated network, a guest or IoT VLAN kept away from your computers and phones, and still control it from anywhere. The device never has to be reachable from your main LAN.
+
+This is an independent fork of [mill1000/midea-msmart](https://github.com/mill1000/midea-msmart) that adds cloud control. The upstream project intentionally does not include cloud functionality, so this fork is maintained separately and is not affiliated with it.
 
 ## Supported Devices
-This library supports air conditioners from Midea and several associated brands that use the following Android apps or their iOS equivalents:
+This controls air conditioners from Midea and several associated brands that use the following Android apps or their iOS equivalents:
 * Artic King (com.arcticking.ac)
 * Cooper & Hunter (com.ch.air)
 * Midea Air (com.midea.aircondition.obm)
@@ -12,159 +14,130 @@ This library supports air conditioners from Midea and several associated brands 
 * SmartHome/MSmartHome (com.midea.ai.overseas)
 * Toshiba AC NA (com.midea.toshiba)
 * 美的美居 (com.midea.ai.appliances)
-  
-__Note: Only air conditioners (type 0xAC and 0xCC) are supported. See the [usage](#usage) section for how to check compatibility.__ 
 
-## Note On Cloud Usage
-By default this library (and its Home Assistant integration [midea-ac-py](https://github.com/mill1000/midea-ac-py)) controls devices locally. In that mode no internet connection is required once set up.
+__Note: Only air conditioners (type 0xAC and 0xCC) are supported. See the [usage](#usage) section for how to check compatibility.__
 
-For newer "V3" devices, the Midea Cloud is used to acquire a token & key for device authentication. Once retrieved and saved, no further cloud connection is required for local control. Devices are not linked to the library’s built-in accounts and concerned users may supply their own account credentials if they prefer.
+## How it connects
+coolth can reach a device two ways. Pick whichever suits the situation:
 
-There is also an optional cloud control mode for AC devices. It sends commands through the Midea cloud so you can control a unit that is not reachable on your local network, for example one placed on an isolated guest or IoT network. This mode does use the internet for every command. See [Cloud control](#cloud-control-control-over-the-internet).
+* **Local network** ([usage](#usage)). Talks directly to the unit over your LAN. Fast, and needs no internet connection once set up.
+* **Cloud** ([cloud control](#cloud-control)). Sends commands through the Midea cloud, so you can control a unit from anywhere, including one that is not reachable on your LAN at all.
 
-## Features
-#### Async Support
-The library fully supports async/await, allowing non-blocking communication with devices.
+The cloud path is what makes network isolation practical. Put the air conditioner on a guest or IoT network, keep it away from the rest of your devices, and still control it. Cloud control is currently available for AC (0xAC) devices and uses the internet for every command.
 
-```python
-from msmart.device import AirConditioner as AC
-
-# Build device
-device = AC(ip=DEVICE_IP, port=6444, device_id=int(DEVICE_ID))
-
-# Get capabilities
-await device.get_capabilities()
-
-# Get current state
-await device.refresh()
-```
-
-#### Device Discovery
-Automatically discover devices on the local network or an individual device by IP or hostname.
-
-```python
-from msmart.discover import Discover
-
-# Discover all devices on the network
-devices = await Discover.discover()
-
-# Discover a single device by IP
-device = await Discover.discover_single(DEVICE_IP)
-```
-
-__Note: V3 devices are automatically authenticated via the NetHome Plus cloud.__
-
-#### Reduced Dependencies
-Many external dependencies have been replaced with standard Python modules.
-
-#### Code Quality Improvements
-- Type annotated for clarity.
-- Code style and import sorting enforced by autopep8 and isort.
-- Unit tests validated by Github Actions.
-- Naming conventions follow PEP8.
+For newer "V3" devices, the local path contacts the Midea cloud once to fetch a token and key for authentication. After that, local control needs no further cloud connection. You can supply your own account credentials rather than the built in ones.
 
 ## Installing
-Install directly from this repository with [pipx](https://pipx.pypa.io):
+Install from PyPI with pip:
 
 ```shell
-pipx install --force git+https://github.com/a904guy/msmart-ng-cloud.git
+pip install coolth
 ```
 
-The `--force` flag replaces any existing `msmart-ng` install (for example the upstream package) with this one.
+Or with [pipx](https://pipx.pypa.io), which installs it in its own isolated environment:
+
+```shell
+pipx install coolth
+```
+
+To get the latest unreleased changes, install straight from this repository:
+
+```shell
+pip install git+https://github.com/a904guy/coolth-ac-controller.git
+```
+
+The command name is `coolth`, so it will not conflict with the upstream `msmart-ng` if you also have that installed.
 
 ## Usage
 ### Command Line Interface (CLI)
-Interact with devices using a simple command-line tool that supports device discovery, querying, and control.
+coolth provides a command line tool for device discovery, querying, and control.
 
 ```shell
-$ msmart-ng --help
-usage: msmart-ng [-h] [-v] {discover,query,control,download} ...
+$ coolth --help
+usage: coolth [-h] [-v] {discover,query,control,download} ...
 ```
 
-For more details on each subcommand and its available options, run `msmart-ng <command> --help`
+For details on each subcommand, run `coolth <command> --help`.
 
 #### Discover
-Discover devices on the local network with the `msmart-ng discover` subcommand. 
+Discover devices on the local network with `coolth discover`.
 
 ```shell
-$ msmart-ng discover
-INFO:msmart.cli:Discovering all devices on local network.
+$ coolth discover
+INFO:coolth.cli:Discovering all devices on local network.
 ...
-INFO:msmart.cli:Found 1 devices.
-INFO:msmart.cli:Found device:
+INFO:coolth.cli:Found 1 devices.
+INFO:coolth.cli:Found device:
 {'ip': '10.100.1.140', 'port': 6444, 'id': 15393162840672, 'online': True, 'supported': True, 'type': <DeviceType.AIR_CONDITIONER: 172>, 'name': 'net_ac_F7B4', 'sn': '000000P0000000Q1F0C9D153F7B40000', 'key': None, 'token': None}
 ```
 
 Ensure the device type is 0xAC and the `supported` property is True.
 
-Save the device ID, IP address, and port. Version 3 devices will also require the `token` and `key` fields to control the device.
-
-#### Warning: V3 Device Users
-For V3 devices, it's highly recommended to save your token and key values in a secure place. In the event that the cloud become unavailable, having these on hand will allow you to continue controlling your device locally.
+Save the device ID, IP address, and port. Version 3 devices will also need the `token` and `key` fields to control the device. The `id` field is what you use as the host for cloud control.
 
 ##### Note: V1 Device Owners
-Owners of V1 devices might encounter the following error:
+Owners of V1 devices might see this error:
 
 ```
-ERROR:msmart.discover:V1 device not supported yet.
+ERROR:coolth.discover:V1 device not supported yet.
 ```
 
-Please report this error with the output of `msmart-ng discover --debug` to help improve support.
+Please report it with the output of `coolth discover --debug`.
 
 #### Query
-Query device state and capabilities with the `msmart-ng query` subcommand.
+Query device state and capabilities with `coolth query`.
 
 ```shell
-$ msmart-ng query <HOST>
+$ coolth query <HOST>
 ```
 
-Add `--capabilities` to query capabilities of the device before requesting the state.
+Add `--capabilities` to query capabilities before requesting the state.
 
-**Note:** Version 3 devices need to specify either the `--auto` argument or the `--token`, `--key` and `--id` arguments to make a connection.
+**Note:** Version 3 devices need either the `--auto` argument or the `--token`, `--key` and `--id` arguments to connect.
 
 **Note:** For CC devices, either the `--auto` argument or the `--device_type` argument must be specified.
 
 #### Control
-Control a device with the `msmart-ng control` subcommand. The command takes key-value pairs of settings to control.
+Control a device with `coolth control`. The command takes key-value pairs of settings.
 
-Enumerated settings like `operational_mode`, `fan_speed`, and `swing_mode` can accept integer or string values. e.g. `operational_mode=cool`, `fan_speed=100` or `swing_mode=both`.
+Enumerated settings like `operational_mode`, `fan_speed`, and `swing_mode` accept integer or string values, e.g. `operational_mode=cool`, `fan_speed=100`, `swing_mode=both`.
 
-Number settings like `target_temperature` can accept floating point or integer values. e.g. `target_temperature=20.5`.
+Number settings like `target_temperature` accept floating point or integer values, e.g. `target_temperature=20.5`.
 
-Boolean settings like `display_on` and `beep` can accept integer or string values. e.g. `display_on=True` or `beep=0`.
+Boolean settings like `display_on` and `beep` accept integer or string values, e.g. `display_on=True`, `beep=0`.
 
 ```shell
-$ msmart-ng control <HOST> operational_mode=cool target_temperature=20.5 fan_speed=100 display_on=True beep=0
+$ coolth control <HOST> operational_mode=cool target_temperature=20.5 fan_speed=100 display_on=True beep=0
 ```
 
-**Note:** Version 3 devices need to specify either the `--auto` argument or the `--token`, `--key` and `--id` arguments to make a connection.
+**Note:** Version 3 devices need either the `--auto` argument or the `--token`, `--key` and `--id` arguments to connect.
 
 **Note:** For CC devices, either the `--auto` argument or the `--device_type` argument must be specified.
 
-#### Cloud control (control over the internet)
+#### Cloud control
 Add `--cloud` to `query` or `control` to reach the device through the Midea cloud instead of the local network. This works from anywhere with internet access, so you do not need to be on the same network as the unit.
 
-The main reason to use this is network isolation. You can put the air conditioner on a guest or IoT WiFi network, away from your computers and phones, and still control it. The unit does not need to be reachable from your LAN at all.
+The main reason to use this is network isolation. You can put the air conditioner on a guest or IoT network, away from your computers and phones, and still control it. The unit does not need to be reachable from your LAN at all.
 
-With `--cloud`, the host argument is the numeric appliance id (not an IP). Get the id from `msmart-ng discover` (the `id` field) while the device is still reachable locally, or from your Midea account. You also need `--account` and `--password`.
+With `--cloud`, the host argument is the numeric appliance id, not an IP. Get the id from `coolth discover` (the `id` field) while the device is still reachable locally, or from your Midea account. You also need `--account` and `--password`.
 
 ```shell
-$ msmart-ng query 151732606158606 --cloud --account you@example.com --password secret
-$ msmart-ng control 151732606158606 --cloud --account you@example.com --password secret operational_mode=cool target_temperature=24
+$ coolth query 151732606158606 --cloud --account you@example.com --password secret
+$ coolth control 151732606158606 --cloud --account you@example.com --password secret operational_mode=cool target_temperature=24
 ```
 
 Notes:
 * Cloud control is currently supported for AC (0xAC) devices.
 * Cloud set commands take a few seconds to reach the unit.
-* Logging in for cloud access uses one session per account. If you run cloud commands while the phone app is open, one of them may get signed out. Use the config file below so you are not passing credentials on every command.
+* Cloud access uses one login session per account. If you run cloud commands while the phone app is open, one of them may get signed out. Use the config file below to keep credentials off the command line.
 
 #### Config file
 To avoid repeating `--account`, `--password`, and other options on every command, put them in a config file. Keys match the flag names.
 
-msmart-ng looks for a config file in this order:
-1. the path in the `MSMART_CONFIG` environment variable
-2. `.msmart-ng.env` in the current directory
-3. `~/.config/msmart-ng/config`
+coolth looks for a config file in this order:
+1. the path in the `COOLTH_CONFIG` environment variable
+2. `.coolth.env` in the current directory
+3. `~/.config/coolth/config`
 
 Example config file:
 
@@ -175,39 +148,77 @@ host = 151732606158606
 cloud = true
 ```
 
-With that file in place you can just run:
+With that in place you can just run:
 
 ```shell
-$ msmart-ng query
-$ msmart-ng control operational_mode=cool target_temperature=24
+$ coolth query
+$ coolth control operational_mode=cool target_temperature=24
 ```
 
 Command line flags always override the config file. Supported keys are `account`, `password`, `region`, `host`, `cloud`, `app_id`, and `app_key`.
 
-### Home Assistant
-To control your Midea AC units via Home Assistant, use this [midea-ac-py](https://github.com/mill1000/midea-ac-py) fork.
-
 ### Python
-To control devices programmatically, see the included Python [example](example.py).
+Control a device over the **local network**:
 
-## Docker
-A docker image is available on ghcr.io at `ghcr.io/mill1000/msmart-ng`. Ensure the container is run with `--network=host` to allow device discovery on the local network via broadcast.
+```python
+from coolth.device import AirConditioner as AC
 
-```shell
-$ docker run --network=host ghcr.io/mill1000/msmart-ng:latest --help
-usage: msmart-ng [-h] [-v] {discover,query,control,download} ...
+# Build a device
+device = AC(ip=DEVICE_IP, port=6444, device_id=int(DEVICE_ID))
+
+# Read capabilities and current state
+await device.get_capabilities()
+await device.refresh()
+
+# Change settings and apply them
+device.power_state = True
+device.operational_mode = AC.OperationalMode.COOL
+device.target_temperature = 24
+await device.apply()
 ```
+
+Control the same device over the **cloud**, using the identical device API. The host is the numeric appliance id, and you log in once with your account:
+
+```python
+from coolth.device import AirConditioner as AC
+from coolth.cloud_lan import CloudLAN, attach
+
+cloud = CloudLAN(APPLIANCE_ID, "you@example.com", "secret")
+await cloud.login()
+
+# Route this device through the cloud instead of the LAN
+device = AC(ip="cloud", port=0, device_id=APPLIANCE_ID)
+attach(device, cloud)
+
+await device.refresh()
+device.target_temperature = 24
+await device.apply()
+```
+
+Discover devices on the local network:
+
+```python
+from coolth.discover import Discover
+
+# Discover all devices on the network
+devices = await Discover.discover()
+
+# Discover a single device by IP
+device = await Discover.discover_single(DEVICE_IP)
+```
+
+See [example.py](example.py) for complete runnable examples of both the local and cloud paths.
+
+### Home Assistant
+This fork renames the Python module to `coolth`, so the Home Assistant integration [midea-ac-py](https://github.com/mill1000/midea-ac-py), which imports `msmart`, is not compatible. Use the upstream project for Home Assistant.
 
 ## Troubleshooting
 * If devices are not being discovered, ensure your devices are on the same subnet as your computer.
-* If a cloud connection can not be made, try using a credentials from a different region with the `--region` argument or manually specifying a NetHome Plus account.
+* If a cloud connection cannot be made, try a different region with `--region`, or double check the account and password.
 
 ## Gratitude
-This project is an independent fork of [mill1000/midea-msmart](https://github.com/mill1000/midea-msmart) (`msmart-ng`), which is itself a fork of [mac-zhou/midea-msmart](https://github.com/mac-zhou/midea-msmart). It builds upon the work of
+This project is an independent fork of [mill1000/midea-msmart](https://github.com/mill1000/midea-msmart), which is itself a fork of [mac-zhou/midea-msmart](https://github.com/mac-zhou/midea-msmart). It builds upon the work of
 * [dudanov/MideaUART](https://github.com/dudanov/MideaUART)
 * [NeoAcheron/midea-ac-py](https://github.com/NeoAcheron/midea-ac-py)
 * [andersonshatch/midea-ac-py](https://github.com/andersonshatch/midea-ac-py)
 * [yitsushi/midea-air-condition](https://github.com/yitsushi/midea-air-condition)
-
-
-
